@@ -1,6 +1,7 @@
 #ifndef RC_STRING_HPP
 #define RC_STRING_HPP
 
+#include <cstdlib>
 #include <string>
 #include <cwctype>
 #include <vector>
@@ -153,16 +154,22 @@ namespace RC
 
     auto inline to_string(std::wstring& input) -> std::string
     {
-#pragma warning(disable: 4244)
-        return std::string{input.begin(), input.end()};
-#pragma warning(default: 4244)
+        if (input.empty()) { return {}; }
+#pragma warning(disable: 4996)
+        std::string ascii_str(input.length(), '!');
+        std::wcstombs(&ascii_str[0], input.c_str(), input.length());
+        return ascii_str;
+#pragma warning(default: 4996)
     }
 
     auto inline to_string(std::wstring_view input) -> std::string
     {
-#pragma warning(disable: 4244)
-        return std::string{input.begin(), input.end()};
-#pragma warning(default: 4244)
+        if (input.empty()) { return {}; }
+#pragma warning(disable: 4996)
+        std::string ascii_str(input.length(), '!');
+        std::wcstombs(&ascii_str[0], input.data(), input.length());
+        return ascii_str;
+#pragma warning(default: 4996)
     }
 
     namespace String
@@ -204,3 +211,4 @@ namespace RC
 }
 
 #endif //RC_STRING_HPP
+
