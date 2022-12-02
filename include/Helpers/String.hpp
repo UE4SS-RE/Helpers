@@ -154,6 +154,7 @@ namespace RC
 
     auto inline to_string(std::wstring& input) -> std::string
     {
+        if (input.empty()) { return {}; }
 #pragma warning(disable: 4996)
         std::string ascii_str(input.length(), '!');
         std::wcstombs(&ascii_str[0], input.c_str(), input.length());
@@ -163,6 +164,7 @@ namespace RC
 
     auto inline to_string(std::wstring_view input) -> std::string
     {
+        if (input.empty()) { return {}; }
 #pragma warning(disable: 4996)
         std::string ascii_str(input.length(), '!');
         std::wcstombs(&ascii_str[0], input.data(), input.length());
