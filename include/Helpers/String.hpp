@@ -1,7 +1,8 @@
 #ifndef RC_STRING_HPP
 #define RC_STRING_HPP
 
-#include <cstdlib>
+#include <locale>
+#include <codecvt>
 #include <string>
 #include <cwctype>
 #include <vector>
@@ -138,38 +139,37 @@ namespace RC
     }
     /* explode_by_occurrence -> END */
 
+    auto inline is_valid_ascii(char character) -> bool
+    {
+        return character >= 0 && static_cast<uint8_t>(character) <= 127;
+    }
+
     auto inline to_wstring(std::string& input) -> std::wstring
     {
-#pragma warning(disable: 4244)
-        return std::wstring{input.begin(), input.end()};
-#pragma warning(default: 4244)
+#pragma warning(disable: 4996)
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter{};
+        return converter.from_bytes(input);
+#pragma warning(default: 4996)
     }
 
     auto inline to_wstring(std::string_view input) -> std::wstring
     {
-#pragma warning(disable: 4244)
-        return std::wstring{input.begin(), input.end()};
-#pragma warning(default: 4244)
+        auto temp_input = std::string{input};
+        return to_wstring(temp_input);
     }
 
     auto inline to_string(std::wstring& input) -> std::string
     {
-        if (input.empty()) { return {}; }
 #pragma warning(disable: 4996)
-        std::string ascii_str(input.length(), '!');
-        std::wcstombs(&ascii_str[0], input.c_str(), input.length());
-        return ascii_str;
+        std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter{};
+        return converter.to_bytes(input);
 #pragma warning(default: 4996)
     }
 
     auto inline to_string(std::wstring_view input) -> std::string
     {
-        if (input.empty()) { return {}; }
-#pragma warning(disable: 4996)
-        std::string ascii_str(input.length(), '!');
-        std::wcstombs(&ascii_str[0], input.data(), input.length());
-        return ascii_str;
-#pragma warning(default: 4996)
+        auto temp_input = std::wstring{input};
+        return to_string(temp_input);
     }
 
     namespace String
