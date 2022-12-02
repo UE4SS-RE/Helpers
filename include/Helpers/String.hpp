@@ -139,11 +139,6 @@ namespace RC
     }
     /* explode_by_occurrence -> END */
 
-    auto inline is_valid_ascii(char character) -> bool
-    {
-        return character >= 0 && static_cast<uint8_t>(character) <= 127;
-    }
-
     auto inline to_wstring(std::string& input) -> std::wstring
     {
 #pragma warning(disable: 4996)
